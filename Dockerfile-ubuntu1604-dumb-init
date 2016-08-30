@@ -1,0 +1,32 @@
+FROM ubuntu:16.04
+
+RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get -o Dpkg::Options::="--force-confnew" -qy install --no-install-recommends \
+    libc6:i386 libc6-dev-i386 libncurses5:i386 texi2html chrpath \
+    diffstat subversion libgl1-mesa-dev libglu1-mesa-dev libsdl1.2-dev \
+    texinfo gawk gcc gcc-multilib help2man g++ git-core python-gtk2 bash cpio \
+    diffutils xz-utils make file screen sudo wget time patch openssh-client curl python3 && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /usr/share/man && \
+    rm -rf /usr/share/doc && \
+    rm -rf /usr/share/grub2 && \
+    rm -rf /usr/share/texmf/fonts && \
+    rm -rf /usr/share/texmf/doc && \
+    locale-gen en_US.UTF-8 && \
+    update-locale LANG=en_US.UTF-8
+
+# add user to sudoers after sudo is installed
+RUN useradd --home-dir /home/build --uid 1000 --gid 100 --shell /bin/bash build && \
+    echo "build ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+# download dumb-init after curl has been installed
+RUN wget -O /bin/dumb-init https://github.com/Yelp/dumb-init/releases/download/v1.1.3/dumb-init_1.1.3_amd64 --no-check-certificate && \
+    chmod +x /bin/dumb-init
+
+ENTRYPOINT ["/bin/dumb-init", "-v", "--"]
+
+CMD ["/bin/bash"]
+
+USER build
