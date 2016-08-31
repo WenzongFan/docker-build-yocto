@@ -11,6 +11,17 @@ Child process timeout after 2 seconds.
 Child process exit status 4: lock_held
 ```
 
+Debug info printed by dumb-init:
+
+```
+[dumb-init] Received signal 10.
+[dumb-init] Forwarded signal 10 to children.
+[dumb-init] Received signal 17.
+[dumb-init] A child with PID 7 was terminated by signal 10.
+[dumb-init] Forwarded signal 15 to children.
+[dumb-init] Child exited with status 138. Goodbye.
+```
+
 After checking with `git bisect`, the bad commit was narrowed down to:
 
 ```
